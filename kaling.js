@@ -28,7 +28,7 @@ module.exports /** @class */ = (function () {
         const AuthResponse = org.jsoup.Jsoup.connect(this.AuthURL).referrer(referer).cookies(this.cookies)
             .requestBody("os=web&webview_v=2&email="+CryptoJS.AES.encrypt(email, cryptoKey).toString()+"&password="+CryptoJS.AES.encrypt(password, cryptoKey).toString()+"&stay_signed_in=true&continue=https%3A%2F%2Fsharer.kakao.com%2Ftalk%2Ffriends%2Fpicker%2F&third=false&k=true")
             .method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
-        this.a = JSON.parse(AuthResponse.body()).status;
+        this.loginStatusCode = JSON.parse(AuthResponse.body()).status;
     }
 
     Kakao.prototype.replyLink = function (roomName, params, type) {
