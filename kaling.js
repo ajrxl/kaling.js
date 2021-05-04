@@ -10,8 +10,8 @@ module.exports /** @class */ = (function () {
 
         if(typeof email !== 'string') throw new TypeError("email type is must string");
         if(typeof password !== 'string') throw new TypeError("password type is must string");
-        if(typeof apiKey !== 'string' || apiKey.length != 32) throw new TypeError("apiKey is not vaild");
-        if(!/^http[s]?\:\/\//i.test(url)) throw new TypeError("url is not vaild");
+        if(typeof apiKey !== 'string' || apiKey.length != 32) throw new TypeError("apiKey is not valid");
+        if(!/^http[s]?\:\/\//i.test(url)) throw new TypeError("url is not valid");
 
         this.apiKey = apiKey;
         this.static = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/' + url
@@ -29,6 +29,10 @@ module.exports /** @class */ = (function () {
             .requestBody("os=web&webview_v=2&email="+CryptoJS.AES.encrypt(email, cryptoKey).toString()+"&password="+CryptoJS.AES.encrypt(password, cryptoKey).toString()+"&stay_signed_in=true&continue=https%3A%2F%2Fsharer.kakao.com%2Ftalk%2Ffriends%2Fpicker%2F&third=false&k=true")
             .method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
         this.a = JSON.parse(AuthResponse.body()).status;
+    }
+
+    Kakao.prototype.replyLink = function (roomName, params, type) {
+        if(typeof params == 'object') throw new Error("params is must JSON");
     }
     return Kakao;
 })();
