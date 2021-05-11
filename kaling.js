@@ -1,5 +1,11 @@
 // @ts-nocheck
 "use strict";
+const KakaoLinkParamsInterface = {
+    link_ver?: String,
+    template_id?: Number,
+    template_args?: any
+}
+
 module.exports /** @class */ = (function () {
     const { CryptoJS } = require('./crypto');
     function Kakao(email, password, apiKey, url) {
@@ -31,7 +37,7 @@ module.exports /** @class */ = (function () {
         this.loginStatusCode = JSON.parse(AuthResponse.body()).status;
     }
 
-    Kakao.prototype.replyLink = function (roomName, params, type) {
+    Kakao.prototype.replyLink = function (roomName, params = KakaoLinkParamsInterface, type) {
         if(typeof params == 'object') throw new Error("params is must JSON");
     }
     return Kakao;
