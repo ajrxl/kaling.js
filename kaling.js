@@ -1,4 +1,5 @@
 // @ts-nocheck
+//crypto.js: https://accounts.kakao.com/js/crypto.js
 "use strict";
 const KakaoLinkParamsInterface = {
     link_ver?: String,
@@ -12,6 +13,7 @@ module.exports /** @class */ = (function () {
         this.AuthURL = "https://accounts.kakao.com/weblogin/authenticate.json"
         this.linkURL = "https://sharer.kakao.com/talk/friends/picker/link";
         this.getTIARA = "https://track.tiara.kakao.com/queen/footsteps";
+        this.loginURL = "https://accounts.kakao.com/login";
         this.cookies = {};
 
         if(typeof email !== 'string') throw new TypeError("email type is must string");
@@ -25,20 +27,21 @@ module.exports /** @class */ = (function () {
         if(ApiKeyResponse.statusCode() != 200) throw new Error("ApiKey Authorzaiton Error: " + ApiKeyResponse.statusCode());
         const cryptoKey = ApiKeyResponse.parse().select('input[name=p]').attr('value')
         const referer = ApiKeyResponse.url().toExternalForm();
-        this.cookies = {
+        Object.assign(this.cookies, {
             _kadu: ApiKeyResponse.cookie('_kadu'),
             _kadub: ApiKeyResponse.cookie('_kadub'),
-            _maldive_oauth_webapp_session: ApiKeyResponse.cookie('_maldive_oauth_webapp_session'),
+            _maldive_oauth_webapp_key: ApiKeyResponse.cookie('_maldive_oauth_webapp_key'),
             TIARA: org.jsoup.Jsoup.connect(this.getTIARA).ignoreContentType(true).method(org.jsoup.Connection.Method.GET).execute().cookie('TIARA')
-        } //set COOKIE
+        }) //copy Cookies
         const AuthResponse = org.jsoup.Jsoup.connect(this.AuthURL).referrer(referer).cookies(this.cookies)
             .requestBody("os=web&webview_v=2&email="+CryptoJS.AES.encrypt(email, cryptoKey).toString()+"&password="+CryptoJS.AES.encrypt(password, cryptoKey).toString()+"&stay_signed_in=true&continue=https%3A%2F%2Fsharer.kakao.com%2Ftalk%2Ffriends%2Fpicker%2F&third=false&k=true")
             .method(org.jsoup.Connection.Method.POST).ignoreContentType(true).ignoreHttpErrors(true).execute();
         this.loginStatusCode = JSON.parse(AuthResponse.body()).status;
     }
 
-    Kakao.prototype.replyLink = function (roomName, params = KakaoLinkParamsInterface, type) {
-        if(typeof params == 'object') throw new Error("params is must JSON");
+    Kakao.prototype.replyLink = function (roomName, params=KakaoLinkParamsInterface, type) {
+        if(typeof params !== 'object') throw new Error("params is must JSON");
+        if(typeof type !== 'string') throw new Error("type is must string");
     }
     return Kakao;
 })();
